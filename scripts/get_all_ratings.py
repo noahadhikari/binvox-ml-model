@@ -28,4 +28,5 @@ def getRatings() -> List[Rating]:
 if __name__ == "__main__":
     # write the ratings to a file called ratings.json
     with open("data/ratings.json", "w") as f:
-        f.write(json.dumps(getRatings()))
+        # pretty print the json
+        f.write(json.dumps(getRatings(), indent=4))
