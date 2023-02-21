@@ -40,6 +40,7 @@ class BinvoxMLModel(nn.Module):
         )
         
     def forward(self, x):
+        x = x.float() # convert voxel boolean array to float
         x = self.seq(x)
         # output is a 1x5 tensor representing the probability of (-2, -1, 0, 1, 2) respectively
         return x.reshape(1, 5)
@@ -66,13 +67,13 @@ def training_loop(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
     for batch, (X, y) in enumerate(dataloader):
         pred = model(X)
-        loss = loss_fn(pred, y)
+        loss = loss_fn(pred, y + 2)
         
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         
-        if batch % 10 == 0:
+        if batch % 1 == 0:
             loss, current = loss.item(), (batch + 1) * len(X)
             print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
@@ -82,17 +83,21 @@ def test_loop(dataloader, model, loss_fn):
     num_batches = len(dataloader)
     print(num_batches)
     test_loss, correct = 0, 0
+    
+    max_iter = 1
 
     with torch.no_grad():
-        for X, y in dataloader:
-            pred = model(X.float())
-            # print(pred)
+        for i, (X, y) in enumerate(dataloader):
+            pred = model(X)
+            print(i)
             # add 2 because ratings from -2 to 2, convert to 0 to 4
             test_loss += loss_fn(pred, y + 2).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            if i > max_iter:
+                break
 
-    test_loss /= num_batches
-    correct /= size
+    test_loss /= min(max_iter, num_batches)
+    correct /= min(max_iter, num_batches)
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
     
 
@@ -110,5 +115,5 @@ if __name__ == "__main__":
     sampler = data.BatchSampler(data.RandomSampler(dataset), batch_size=1, drop_last=False)
     loader = data.DataLoader(BinvoxDataset('data/ratings.json'), batch_sampler=sampler)
     
-    test_loop(loader, model, nn.CrossEntropyLoss())
+    training_loop(loader, model, nn.CrossEntropyLoss(), torch.optim.Adam(model.parameters(), lr=0.001))
     
