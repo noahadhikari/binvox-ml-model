@@ -25,13 +25,21 @@ def getRatings() -> List[Rating]:
 
     return items
 
+
+def load_google_api_key():
+    #load api key from .env
+    with open(".env", "r") as f:
+        for line in f.readlines():
+            if line.startswith("GOOGLE_API_KEY"):
+                return line.split("=")[1].strip()
+    
 def download_binvox_from_rating(rating):
     """ Given a rating, download its binvox file from Google Drive.
         Only downloads if the binvoxId is not None.
     """
     
     BASE_URL = "https://www.googleapis.com/drive/v3/files/"
-    API_KEY = "AIzaSyCRilG62Ju2DZp02N4op5QnOBtEz_F2w5g"
+    API_KEY = load_google_api_key()
     
     if rating['binVoxId'] is None:
         return
@@ -42,8 +50,8 @@ def download_binvox_from_rating(rating):
 
 def download_stl_from_rating(rating):
     BASE_URL = "https://www.googleapis.com/drive/v3/files/"
-    API_KEY = "AIzaSyCRilG62Ju2DZp02N4op5QnOBtEz_F2w5g"
-    
+    API_KEY = load_google_api_key()
+
     if rating['stlId'] is None:
         return
     
