@@ -4,6 +4,10 @@
 
 Run `git clone https://github.com/noahadhikari/binvox-ml-model.git` in a Bash-like terminal (e.g. [Git Bash](https://gitforwindows.org/)) to clone this repository to a location of your choosing. Then `cd` into it and open the `binvox-ml-model/` folder in an editor such as VSCode or PyCharm.
 
+### NOTE
+
+**The following commands and scripts should be run from `binvox-ml-model/`** (the parent folder), **not `binvox-ml-model/scripts/`.** If you don't do this, the scripts may not be able to find the `data/` directory and credentials. However, if you're still running into this problem, you can create a copy of the `data/` folder and credentials files inside of `scripts/` as well (but these two folders should be identical!).
+
 ### Package installation
 
 Python 3.10.11 and the following packages (and their subdependencies) were used:
