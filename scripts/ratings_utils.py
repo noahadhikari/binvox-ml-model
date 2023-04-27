@@ -15,6 +15,7 @@ async def get_all_ratings():
     # Get all ratings in batches
     skip = 0
     while True:
+        print(f"Getting ratings {skip} to {skip + PRISMA_MAX_QUERY_SIZE}")
         ratings = await prisma.rating.find_many(skip=skip, take=PRISMA_MAX_QUERY_SIZE)
         if len(ratings) == 0:
             break
