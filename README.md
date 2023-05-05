@@ -16,15 +16,7 @@ To get out of the virtual environment, simply run `deactivate`.
 
 ### Package installation
 
-Python 3.10.11 and the following packages (and their subdependencies) were used:
-
-- `pandas=2.0.1`
-- `prisma=0.8.2`
-- `google-api-python-client=2.86.0`
-- `google-auth-httplib2=0.1.0`
-- `google-auth-oauthlib=1.0.0`
-- `tqdm=4.65.0`
-- `pytorch=1.12.1`
+Python 3.10.11 was used. Once you're inside the virtual environment, you can install all the dependencies using `pip -r requirements.txt`.
 
 ## Data Acquisition
 
