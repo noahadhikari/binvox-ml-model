@@ -12,6 +12,8 @@ Run `git clone https://github.com/noahadhikari/binvox-ml-model.git` in a Bash-li
 
 Using a virtual environment before package installation is recommended. To do so, run `python -m venv .venv` from the `binvox-ml-model` directory, which should create a folder called `.venv`. Then, run `source .venv/Scripts/activate` to activate the virtual environment. If you're using an editor like VSCode or PyCharm, you'll also need to switch the Python interpreter to use the virtual environment you just created.
 
+To get out of the virtual environment, simply run `deactivate`.
+
 ### Package installation
 
 Python 3.10.11 and the following packages (and their subdependencies) were used:
