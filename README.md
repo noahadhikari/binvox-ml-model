@@ -16,7 +16,7 @@ To get out of the virtual environment, simply run `deactivate`.
 
 ### Package installation
 
-Python 3.10.11 was used. Once you're inside the virtual environment, you can install all the dependencies using `pip -r requirements.txt`.
+Python 3.11.3 was used. Once you're inside the virtual environment, you can install all the dependencies using `pip -r requirements.txt`.
 
 ## Data Acquisition
 
