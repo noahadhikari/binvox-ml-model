@@ -50,9 +50,7 @@ Follow the steps in the quickstart here and see if you can get `quickstart.py` w
 
 This will set up the environment expected for `scripts/download_all_models.py`.
 
-NOTE: You may need to do the following steps before Google's `quickstart.py` will work.
-
-Change the port on the line `creds = flow.run_local_server(port=0)` to be `port=8080` instead of `port=0`. Then do the following:
+NOTE: You may need to do the following steps before Google's `quickstart.py` will work:
 
 Create an OAuth client ID for Web Application and add the following to its Authorized JavaScript origins (unsure of how many of these are necessary):
 - http://localhost
