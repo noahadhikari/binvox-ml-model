@@ -8,17 +8,15 @@ Run `git clone https://github.com/noahadhikari/binvox-ml-model.git` in a Bash-li
 
 **The following commands and scripts should be run from `binvox-ml-model/`** (the parent folder), **not `binvox-ml-model/scripts/`.** If you don't do this, the scripts may not be able to find the `data/` directory and credentials. However, if you're still running into this problem, you can create a copy of the `data/` folder and credentials files inside of `scripts/` as well (but these two folders should be identical!).
 
+### Creating a virtual environment
+
+Using a virtual environment before package installation is recommended. To do so, run `python -m venv ./venv` from the `binvox-ml-model` directory, which should create a folder called `venv`. Then, run `source venv/Scripts/activate` to activate the virtual environment. If you're using an editor like VSCode or PyCharm, you'll also need to switch the Python interpreter to use the virtual environment you just created.
+
+To get out of the virtual environment, simply run `deactivate`.
+
 ### Package installation
 
-Python 3.10.11 and the following packages (and their subdependencies) were used:
-
-- `pandas=2.0.1`
-- `prisma=0.8.2`
-- `google-api-python-client=2.86.0`
-- `google-auth-httplib2=0.1.0`
-- `google-auth-oauthlib=1.0.0`
-- `tqdm=4.65.0`
-- `pytorch=1.12.1`
+Python 3.10.11 was used. Once you're inside the virtual environment, you can install all the dependencies using `pip -r requirements.txt`.
 
 ## Data Acquisition
 
