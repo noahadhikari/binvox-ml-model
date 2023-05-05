@@ -18,6 +18,19 @@ To get out of the virtual environment, simply run `deactivate`.
 
 Python 3.11.3 was used. Once you're inside the virtual environment, you can install all the dependencies using `pip install -r requirements.txt`.
 
+### Environment variables
+
+You will need to create a `.env` file in the folder with the following lines:
+
+```
+GOOGLE_API_KEY = {Google Drive API key here}
+DATABASE_URL = '{the database url}'
+```
+
+### Activating Prisma
+
+Run `prisma generate` from the `binvox-ml-model` directory. You should see a `prisma/` folder show up. You may need to copy it into the `scripts/` folder if the following steps aren't working.
+
 ## Data Acquisition
 
 NOTE: For these acquisition steps, you may need to move the `data` folder inside the `scripts` folder. I'm not sure why because the directory is set to be the root directory.
@@ -51,16 +64,6 @@ and the following to Authorized redirect URIs:
 - https://model-rating.vercel.app/api/auth/callback/google
 - http://localhost
 - http://localhost:8080/
-
-
-### Environment variables
-
-If you have gotten `quickstart.py` to work, you should have the Google credentials set up in your folder. You will also need to create a `.env` file in the folder with the following lines:
-
-```
-GOOGLE_API_KEY = {Google Drive API key here}
-DATABASE_URL = '{the database url}'
-```
 
 ### Modifying scopes
 
