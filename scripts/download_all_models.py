@@ -18,9 +18,9 @@ import pandas as pd
 ALL_FILE_FOLDERS = {
     # "URAP3D_STL": "1P0k67JaVkJRyFysUC_G8bKmRQQD_TKhq",
     # "CAD_PARTS_FOLDER": "1kvid8nlRhSFrnIzrZbjt5uOOuEixPBpN",
-    # "PARTS_0_1_3950": "1rIlKhyHHyQ55RW8igH7ywnH0hXMLDwA_",
-    # "PARTS_0_3951_5450": "1cKpVz3Vol2F8-i-V6ixnGkH94Al8VsjP",
-    # "PARTS_0_5451_9606": "1CkJ30EDPfz8g0okPQPW19vkoqzdClYg8",
+    "PARTS_0_1_3950": "1rIlKhyHHyQ55RW8igH7ywnH0hXMLDwA_",
+    "PARTS_0_3951_5450": "1cKpVz3Vol2F8-i-V6ixnGkH94Al8VsjP",
+    "PARTS_0_5451_9606": "1CkJ30EDPfz8g0okPQPW19vkoqzdClYg8",
     "PARTS_1_1_2500": "1j_J4PxkVZlfP7kqhP4JwyUG29bYVLbNJ",
     "PARTS_1_2501_7500": "155SmkUlp2Z8nVb_VjUgoTNPRMO1jl9gQ",
     "PARTS_1_7501_11227": "1ZtDlxIVOq_B6gbryrtXZTQXJpv3bodEv",
@@ -32,6 +32,20 @@ ALL_FILE_FOLDERS = {
     "PARTS_4_1_5500": "1xXbNZ2fGW_9wz3ezM84ckqCq91cTySwR",
     "PARTS_4_5501_8000": "1I5fMkCzS26gT4yjnd5VIB80ga2glWzNc",
     "PARTS_4_8001_10154": "1RlXw5gWgBt9Ce2nHgrdPy-1i5dCPKf-7",
+    "PARTS_5_1_3000": "1AXASF26UG9-fXAHCa9mLXHk-WhjpWrVB",
+    "PARTS_5_3001_5500": "1JZes4v9qIU9QdaKaU8qtDkLBaY2jZzIe",
+    "PARTS_5_5501_9000": "1MhR-Gr8Gid_H2yFBsH89H5L3MCMKMKng",
+    "PARTS_5_9001_11289": "1Z3DbNC7yEI-41m3sG04EAy0ifaOMVMK1",
+    "PARTS_6_1_3500": "17Tomwp9gSCGL54tORcxBYTIq08hlVbVJ",
+    "PARTS_6_3501_7000": "1mpPRuCfFv2A_Xv6e-LFdD1sMKrUt-pjK",
+    "PARTS_6_7001_10567": "1F-C_PwR6vsk90cXKVtaY2bOdx_ZLoaKB",
+    "PARTS_7_1_3667": "1u4y9Mjpg3NM-SI27dr5tMjVUwB6ibiSG",
+    "PARTS_7_3668_7334": "1mo6_so7q8fX4LmcWiiL3mao_uqMh1j-p",
+    "PARTS_7_7335_11046": "1ZA6E3t6ayo5bOMBMVaZgBqbOCh5eLij5",
+    "PARTS_8_1_3500": "1JInIBDb4icrMGPMk4bladLpNmTiDTW_m",
+    "PARTS_8_3500_7000": "1M3aFmYbn_msl7VEUV8grx70-5vXM8Q7U",
+    "PARTS_8_7001_10222": "1qjyaoedbdDHw5lLoWgyHIl1f91dwFJI0",
+    "PARTS_10": "1wUmkgUvyEZ-u_LAcOR9bqSoMU-yWS-dh",
 }
 
 BINVOX_MIMETYPE = 'application/octet-stream'

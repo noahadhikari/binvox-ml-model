@@ -10,6 +10,8 @@ Run `git clone https://github.com/noahadhikari/binvox-ml-model.git` in a Bash-li
 
 ### Creating a virtual environment
 
+If you know how to use Anaconda, you can use that instead.
+
 Using a virtual environment before package installation is recommended. To do so, run `python -m venv ./venv` from the `binvox-ml-model` directory, which should create a folder called `venv`. Then, run `source venv/Scripts/activate` to activate the virtual environment. If you're using an editor like VSCode or PyCharm, you'll also need to switch the Python interpreter to use the virtual environment you just created.
 
 To get out of the virtual environment, simply run `deactivate`.
@@ -20,7 +22,7 @@ Python 3.11.3 was used. Once you're inside the virtual environment, you can inst
 
 ### Environment variables
 
-You will need to create a `.env` file in the folder with the following lines:
+You will need to create a `.env` file in the folder with the following lines (omitting the curly braces):
 
 ```
 GOOGLE_API_KEY = {Google Drive API key here}
@@ -30,6 +32,10 @@ DATABASE_URL = '{the database url}'
 ### Activating Prisma
 
 Run `prisma generate` from the `binvox-ml-model` directory. You should see a `prisma/` folder show up. You may need to copy it into the `scripts/` folder if the following steps aren't working.
+
+### Viewing the database
+
+To view the database in Prisma's GUI, you can run `prisma studio` from the `binvox-ml-model` directory. You should see a GUI pop up in your browser.
 
 ## Data Acquisition
 
