@@ -2,7 +2,7 @@ generator client {
   provider             = "prisma-client-py"
   previewFeatures      = ["fullTextSearch", "fullTextIndex"]
   recursive_type_depth = "-1"
-  output = "./prisma"
+  output = "./scripts/prisma"
 }
 
 datasource db {
