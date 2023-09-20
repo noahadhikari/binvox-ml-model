@@ -56,7 +56,7 @@ ENTRIES_PER_PAGE = 1000
 
 MAX_PAGES = 1 # how many pages to go per folder, set to 1 for testing
 
-NUM_THREADS = 60 # just put the max that works?? don't know what number is maximum for a given architecture, but can find by doubling
+NUM_THREADS = 100 # just put the max that works?? I think colab has two cores, don't know what number is maximum for a given architecture, but can find by doubling
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
@@ -159,13 +159,15 @@ def download_file(parent_folder_id, file_id, service, mimeType):
     
     if not os.path.exists(path):
         os.makedirs(path)
-        
-    request = service.files().get_media(fileId=file_id)
-    with open(os.path.join(path, f"{file_name}.{file_type}"), "wb") as f:
-        downloader = MediaIoBaseDownload(f, request)
-        done = False
-        while not done:
-            _, done = downloader.next_chunk()
+
+    path_to_write = os.path.join(path, f"{file_name}.{file_type}")
+    if not os.path.exists(path_to_write):
+        request = service.files().get_media(fileId=file_id)
+        with open(path_to_write, "wb") as f:
+            downloader = MediaIoBaseDownload(f, request)
+            done = False
+            while not done:
+                _, done = downloader.next_chunk()
 
 
 
