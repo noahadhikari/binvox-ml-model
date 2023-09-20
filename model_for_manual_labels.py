@@ -110,7 +110,7 @@ if __name__ == "__main__":
     print(model)
     
     
-    dataset = BinvoxDataset('data/ratings.json', 'data/id_data.csv')
+    dataset = BinvoxDataset('data/ratings.csv', 'data/id_data.csv')
     
     sampler = data.BatchSampler(data.RandomSampler(dataset), batch_size=1, drop_last=False)
     loader = data.DataLoader(dataset, batch_sampler=sampler)

@@ -13,8 +13,8 @@ class BinvoxDataset(Dataset):
 
     BINVOX_DATA_DIR = "data/binvox"
 
-    def __init__(self, ratings_json, id_data_csv):
-        raw_ratings = pd.read_json(ratings_json)
+    def __init__(self, ratings_csv, id_data_csv):
+        raw_ratings = pd.read_csv(ratings_csv)
         id_data = pd.read_csv(id_data_csv, sep=",", header=0)
         
         #rename the id column of id_data to modelId
@@ -53,5 +53,5 @@ class BinvoxDataset(Dataset):
 
 
 if __name__ == "__main__":
-    b = BinvoxDataset('data/ratings.json', 'data/id_data.csv')
+    b = BinvoxDataset('data/ratings.csv', 'data/id_data.csv')
     print(b[0])
