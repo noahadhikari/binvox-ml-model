@@ -25,7 +25,7 @@ Python 3.11.3 was used. Once you're inside the virtual environment, you can inst
 You will need to create a `.env` file in the folder with the following lines (omitting the curly braces):
 
 ```
-GOOGLE_API_KEY = {Google Drive API key here}
+GOOGLE_API_KEY = {Google Drive API key here. You can omit this for now and fill it in later}
 DATABASE_URL = '{the database url}'
 ```
 
@@ -43,16 +43,18 @@ NOTE: For these acquisition steps, you may need to move the `data` folder inside
 
 ### Acquiring ID data
 
-Firstly, make a folder called `data/` in the `binvox-ml-model/` folder. Run `scripts/db_id_querier` to get the ID data from the database for STL and binvox models.
+Firstly, make a folder called `data/` in the `binvox-ml-model/` folder. Run `scripts/db_id_querier.py` to get the ID data from the database for STL and binvox models.
 
 ### Acquiring ratings
 
-Then, run `scripts/db_rating_querier` to get ratings for models.
+Then, run `scripts/db_rating_querier.py` to get ratings for models.
 
 
 ### Acquiring Google credentials
 
 Follow the steps in the quickstart here and see if you can get `quickstart.py` working: https://developers.google.com/drive/api/quickstart/python
+
+At this point, you can go back to `.env` and fill in the remaining line for `GOOGLE_API_KEY`.
 
 This will set up the environment expected for `scripts/download_all_models.py`.
 
