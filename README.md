@@ -26,7 +26,7 @@ You will need to create a `.env` file in the folder with the following lines (om
 
 ```
 GOOGLE_API_KEY = {Your Google Drive API key here. You can omit this for now and fill it in later}
-DATABASE_URL = 'mysql://8v16gwff0ymgk9l6w7ya:pscale_pw_fXIQMOV0GDVYKTlboglsGEdOy1wXGack6URd7oCtPPZ@aws.connect.psdb.cloud/labeled-voxels?sslaccept=strict'
+DATABASE_URL = 'mysql://6vop5xoxz4lkaxd4g7op:pscale_pw_xQmnDyP40vjcy7VEyOAvIQg38ZkYkRCO8YIAYTMDZOJ@aws.connect.psdb.cloud/labeled-voxels?sslaccept=strict'
 ```
 
 ### Activating Prisma
