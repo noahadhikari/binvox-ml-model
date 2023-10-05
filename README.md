@@ -25,8 +25,8 @@ Python 3.11.3 was used. Once you're inside the virtual environment, you can inst
 You will need to create a `.env` file in the folder with the following lines (omitting the curly braces):
 
 ```
-GOOGLE_API_KEY = {Google Drive API key here. You can omit this for now and fill it in later}
-DATABASE_URL = '{the database url}'
+GOOGLE_API_KEY = {Your Google Drive API key here. You can omit this for now and fill it in later}
+DATABASE_URL = 'mysql://8v16gwff0ymgk9l6w7ya:pscale_pw_fXIQMOV0GDVYKTlboglsGEdOy1wXGack6URd7oCtPPZ@aws.connect.psdb.cloud/labeled-voxels?sslaccept=strict'
 ```
 
 ### Activating Prisma
