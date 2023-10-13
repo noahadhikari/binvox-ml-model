@@ -25,8 +25,8 @@ Python 3.11.3 was used. Once you're inside the virtual environment, you can inst
 You will need to create a `.env` file in the folder with the following lines (omitting the curly braces):
 
 ```
-GOOGLE_API_KEY = {Google Drive API key here}
-DATABASE_URL = '{the database url}'
+GOOGLE_API_KEY = {Your Google Drive API key here. You can omit this for now and fill it in later}
+DATABASE_URL = {database url here}
 ```
 
 ### Activating Prisma
@@ -54,7 +54,7 @@ Then, run `scripts/db_rating_querier.py` to get ratings for models.
 
 Follow the steps in the quickstart here and see if you can get `quickstart.py` working: https://developers.google.com/drive/api/quickstart/python
 
-If this file runs without any errors, you can move on to the next step.
+At this point, you can go back to `.env` and fill in the remaining line for `GOOGLE_API_KEY`.
 
 This will set up the environment expected for `scripts/download_all_models.py`.
 
