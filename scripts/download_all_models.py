@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+import numpy as np
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -10,25 +12,52 @@ from googleapiclient.http import MediaIoBaseDownload
 
 from tqdm import tqdm
 
-from multiprocessing import Pool
+import istarmap # apply patch to allow tqdm on starmap
+from multiprocessing import Pool, Lock
 
 
 import pandas as pd
 
+
+
+BINVOX_MIMETYPE = 'application/octet-stream'
+STL_MIMETYPE = 'application/vnd.ms-pki.stl'
+FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
+
+ENTRIES_PER_PAGE = 1000
+
+MAX_PAGES = 50 # how many pages to go per folder, set to 1 for testing
+
+NUM_WORKERS = 60 # just put the max that works?? don't know what number is maximum for a given architecture, but can find by doubling
+
+# If modifying these scopes, delete the file token.json.
+SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
+          'https://www.googleapis.com/auth/drive']
+
+
+# load in the model id to stl and binvox id data
+STL_TO_MODEL_ID = pd.read_csv("data/id_data.csv", index_col=1)
+BINVOX_TO_MODEL_ID = pd.read_csv("data/id_data.csv", index_col=2)
+
+BINVOX_SEARCH_KEY = "binvox_default_res"
+STL_SEARCH_KEY = "rotated_stl_files"
+
+NUM_DOWNLOAD_RETRIES = 10
+
 ALL_FILE_FOLDERS = {
     # "URAP3D_STL": "1P0k67JaVkJRyFysUC_G8bKmRQQD_TKhq",
     # "CAD_PARTS_FOLDER": "1kvid8nlRhSFrnIzrZbjt5uOOuEixPBpN",
-    "PARTS_0_1_3950": "1rIlKhyHHyQ55RW8igH7ywnH0hXMLDwA_",
-    "PARTS_0_3951_5450": "1cKpVz3Vol2F8-i-V6ixnGkH94Al8VsjP",
-    "PARTS_0_5451_9606": "1CkJ30EDPfz8g0okPQPW19vkoqzdClYg8",
-    "PARTS_1_1_2500": "1j_J4PxkVZlfP7kqhP4JwyUG29bYVLbNJ",
-    "PARTS_1_2501_7500": "155SmkUlp2Z8nVb_VjUgoTNPRMO1jl9gQ",
-    "PARTS_1_7501_11227": "1ZtDlxIVOq_B6gbryrtXZTQXJpv3bodEv",
-    "PARTS_2_1_3500": "1Ju7G3RB-KLtC4i8drcGdN2YEcUczueov",
-    "PARTS_2_3501_7500": "1kUIWVdyryIcETdOQik29T1DPVZAWJ9-a",
-    "PARTS_2_7501_11076": "1ZwfiDKMlHZgpgZOOJhqBUwQnBFjXQhZd",
-    "PARTS_3_1_5500": "19rsrWC1dmBtCD9uPJCC5QdwOWD7VYeY7",
-    "PARTS_3_5501_10844": "1GOTtPLaxOlAguBdNuKfpeLn8UuA5OCxA",
+    # done: "PARTS_0_1_3950": "1rIlKhyHHyQ55RW8igH7ywnH0hXMLDwA_",
+    # done: "PARTS_0_3951_5450": "1cKpVz3Vol2F8-i-V6ixnGkH94Al8VsjP",
+    # done: "PARTS_0_5451_9606": "1CkJ30EDPfz8g0okPQPW19vkoqzdClYg8",
+    # done: "PARTS_1_1_2500": "1j_J4PxkVZlfP7kqhP4JwyUG29bYVLbNJ",
+    # done: "PARTS_1_2501_7500": "155SmkUlp2Z8nVb_VjUgoTNPRMO1jl9gQ",
+    # done: "PARTS_1_7501_11227": "1ZtDlxIVOq_B6gbryrtXZTQXJpv3bodEv",
+    # done: "PARTS_2_1_3500": "1Ju7G3RB-KLtC4i8drcGdN2YEcUczueov",
+    # done: "PARTS_2_3501_7500": "1kUIWVdyryIcETdOQik29T1DPVZAWJ9-a",
+    # done: "PARTS_2_7501_11076": "1ZwfiDKMlHZgpgZOOJhqBUwQnBFjXQhZd",
+    # done: "PARTS_3_1_5500": "19rsrWC1dmBtCD9uPJCC5QdwOWD7VYeY7",
+    # done: "PARTS_3_5501_10844": "1GOTtPLaxOlAguBdNuKfpeLn8UuA5OCxA",
     "PARTS_4_1_5500": "1xXbNZ2fGW_9wz3ezM84ckqCq91cTySwR",
     "PARTS_4_5501_8000": "1I5fMkCzS26gT4yjnd5VIB80ga2glWzNc",
     "PARTS_4_8001_10154": "1RlXw5gWgBt9Ce2nHgrdPy-1i5dCPKf-7",
@@ -43,29 +72,41 @@ ALL_FILE_FOLDERS = {
     "PARTS_7_3668_7334": "1mo6_so7q8fX4LmcWiiL3mao_uqMh1j-p",
     "PARTS_7_7335_11046": "1ZA6E3t6ayo5bOMBMVaZgBqbOCh5eLij5",
     "PARTS_8_1_3500": "1JInIBDb4icrMGPMk4bladLpNmTiDTW_m",
-    "PARTS_8_3500_7000": "1M3aFmYbn_msl7VEUV8grx70-5vXM8Q7U",
+    "PARTS_8_3501_7000": "1M3aFmYbn_msl7VEUV8grx70-5vXM8Q7U",
     "PARTS_8_7001_10222": "1qjyaoedbdDHw5lLoWgyHIl1f91dwFJI0",
     "PARTS_10": "1wUmkgUvyEZ-u_LAcOR9bqSoMU-yWS-dh",
 }
 
-BINVOX_MIMETYPE = 'application/octet-stream'
-STL_MIMETYPE = 'application/vnd.ms-pki.stl'
-FOLDER_MIMETYPE = 'application/vnd.google-apps.folder'
-
-ENTRIES_PER_PAGE = 1000
-
-MAX_PAGES = 1 # how many pages to go per folder, set to 1 for testing
-
-NUM_THREADS = 60 # just put the max that works?? don't know what number is maximum for a given architecture, but can find by doubling
-
-# If modifying these scopes, delete the file token.json.
-SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly',
-          'https://www.googleapis.com/auth/drive']
-
-
-# load in the model id to stl and binvox id data
-STL_TO_MODEL_ID = pd.read_csv("data/id_data.csv", index_col=1)
-BINVOX_TO_MODEL_ID = pd.read_csv("data/id_data.csv", index_col=2)
+EST_SIZES = {
+    "1rIlKhyHHyQ55RW8igH7ywnH0hXMLDwA_": 3950,
+    "1cKpVz3Vol2F8-i-V6ixnGkH94Al8VsjP": 1500,
+    "1CkJ30EDPfz8g0okPQPW19vkoqzdClYg8": 4156,
+    "1j_J4PxkVZlfP7kqhP4JwyUG29bYVLbNJ": 2500,
+    "155SmkUlp2Z8nVb_VjUgoTNPRMO1jl9gQ": 5000,
+    "1ZtDlxIVOq_B6gbryrtXZTQXJpv3bodEv": 3727,
+    "1Ju7G3RB-KLtC4i8drcGdN2YEcUczueov": 3500,
+    "1kUIWVdyryIcETdOQik29T1DPVZAWJ9-a": 4000,
+    "1ZwfiDKMlHZgpgZOOJhqBUwQnBFjXQhZd": 3576,
+    "19rsrWC1dmBtCD9uPJCC5QdwOWD7VYeY7": 5500,
+    "1GOTtPLaxOlAguBdNuKfpeLn8UuA5OCxA": 5344,
+    "1xXbNZ2fGW_9wz3ezM84ckqCq91cTySwR": 5500,
+    "1I5fMkCzS26gT4yjnd5VIB80ga2glWzNc": 2499,
+    "1RlXw5gWgBt9Ce2nHgrdPy-1i5dCPKf-7": 2143,
+    "1AXASF26UG9-fXAHCa9mLXHk-WhjpWrVB": 3000,
+    "1JZes4v9qIU9QdaKaU8qtDkLBaY2jZzIe": 2499,
+    "1MhR-Gr8Gid_H2yFBsH89H5L3MCMKMKng": 3499,
+    "1Z3DbNC7yEI-41m3sG04EAy0ifaOMVMK1": 2289,
+    "17Tomwp9gSCGL54tORcxBYTIq08hlVbVJ": 3500,
+    "1mpPRuCfFv2A_Xv6e-LFdD1sMKrUt-pjK": 3499,
+    "1F-C_PwR6vsk90cXKVtaY2bOdx_ZLoaKB": 3567,
+    "1u4y9Mjpg3NM-SI27dr5tMjVUwB6ibiSG": 3667,
+    "1mo6_so7q8fX4LmcWiiL3mao_uqMh1j-p": 3667,
+    "1ZA6E3t6ayo5bOMBMVaZgBqbOCh5eLij5": 3707,
+    "1JInIBDb4icrMGPMk4bladLpNmTiDTW_m": 3500,
+    "1M3aFmYbn_msl7VEUV8grx70-5vXM8Q7U": 3499,
+    "1qjyaoedbdDHw5lLoWgyHIl1f91dwFJI0": 3222,
+    "1wUmkgUvyEZ-u_LAcOR9bqSoMU-yWS-dh": 11000
+}
 
 def load_google_api_key(cwd):
     # load api key from .env
@@ -100,10 +141,9 @@ def token_login():
 def get_files_directly_in(folderId, service, mimeType=None, nextPageToken=None):
 
     # Call the Drive v3 API
-    query = f"'{folderId}' in parents"  # needs space!
+    query = f"'{folderId}' in parents"
     if mimeType:
         query += f" and mimeType = '{mimeType}'"
-    # query = f"'{FOLDER_ID}' in parents and mimeType = '{binvox_mimeType}'" # binvox
     results = []
     try:
         results = service.files().list(
@@ -118,57 +158,81 @@ def get_files_directly_in(folderId, service, mimeType=None, nextPageToken=None):
 
 
 def download_all_binvox_stl_files_in(folderId, service):
-    # Assumes structure is "Binvox_files_default_res" and "rotated_files"
+    print("Finding source folder in Google Drive...")
     direct_files = get_files_directly_in(folderId, service)
-    binvox_folder = [f for f in direct_files.get('files', []) if f['mimeType'] == FOLDER_MIMETYPE and "Binvox" in f['name']][0]
-    stl_folder = [f for f in direct_files.get('files', []) if f['mimeType'] == FOLDER_MIMETYPE and "rotated" in f['name']][0]
-    
-    # use multiprocessing to parallelize the above loops
-    with Pool(NUM_THREADS) as p:
-        binvox_iter = [(folderId, binvox_file['id'], service, BINVOX_MIMETYPE) for binvox_file in get_all_files_of_type(binvox_folder['id'], service, BINVOX_MIMETYPE)]
-        stl_iter = [(folderId, stl_file['id'], service, STL_MIMETYPE) for stl_file in get_all_files_of_type(stl_folder['id'], service, STL_MIMETYPE)]
-        
-        all_iter = binvox_iter + stl_iter
-        p.starmap(download_file, tqdm(all_iter))
-        
+    binvox_folder = [f for f in direct_files.get('files', []) if f['mimeType'] == FOLDER_MIMETYPE and BINVOX_SEARCH_KEY in f['name']][0]
+    stl_folder = [f for f in direct_files.get('files', []) if f['mimeType'] == FOLDER_MIMETYPE and STL_SEARCH_KEY in f['name']][0]
+    print("Done!\n")
 
-def get_all_files_of_type(folderId, service, mimeType, pageLimit=MAX_PAGES):
+
+    # 6 because one for each rotation
+    estimated_limit = (6 * EST_SIZES[folderId]) // ENTRIES_PER_PAGE
+
+    print("Sourcing binvox files...")
+    binvox_list = [(folderId, binvox_file['id'], service, BINVOX_MIMETYPE) for binvox_file in get_all_files_of_type(binvox_folder['id'], service, BINVOX_MIMETYPE, estimated_limit=estimated_limit)]
+    
+    print("Sourcing stl files...")
+    stl_list = [(folderId, stl_file['id'], service, STL_MIMETYPE) for stl_file in get_all_files_of_type(stl_folder['id'], service, STL_MIMETYPE, estimated_limit=estimated_limit)]
+    
+    all_list = binvox_list + stl_list
+    
+    print("Starting parallelized downloading...")
+    with Pool(NUM_WORKERS) as p:
+        for _ in tqdm(p.istarmap(download_file, all_list), total=len(all_list)):
+            pass
+
+def get_all_files_of_type(folderId, service, mimeType, pageLimit=MAX_PAGES, estimated_limit=0):
 
     direct_files = get_files_directly_in(folderId, service)
     results = [f for f in direct_files.get('files', []) if f['mimeType'] == mimeType]
     
-    i = 1
-    while ('nextPageToken' in direct_files and i < pageLimit):
-        # print(f"Page {i} for {folderId}")
-        direct_files = get_files_directly_in(folderId, service, nextPageToken=direct_files['nextPageToken'])
-        results += [f for f in direct_files.get('files', []) if f['mimeType'] == mimeType]
-        
-        i += 1
+    
+    with tqdm(total=estimated_limit) as pbar:
+        i = 0
+        while ('nextPageToken' in direct_files and i < pageLimit):
+            direct_files = get_files_directly_in(folderId, service, nextPageToken=direct_files['nextPageToken'])
+            results += [f for f in direct_files.get('files', []) if f['mimeType'] == mimeType]
+            
+            i += 1
+            pbar.update(1)
         
     return results
 
 def download_file(parent_folder_id, file_id, service, mimeType):
-    if mimeType == BINVOX_MIMETYPE:
-        file_type = "binvox"
-        file_name = BINVOX_TO_MODEL_ID.loc[file_id, "id"]
-    elif mimeType == STL_MIMETYPE:
-        file_type = "stl"
-        file_name = STL_TO_MODEL_ID.loc[file_id, "id"]
+    try:
+        if mimeType == BINVOX_MIMETYPE:
+            file_type = "binvox"
+            file_name = BINVOX_TO_MODEL_ID.loc[file_id, "id"]
+        elif mimeType == STL_MIMETYPE:
+            file_type = "stl"
+            file_name = STL_TO_MODEL_ID.loc[file_id, "id"]
+    except KeyError:
+        print(f"WARNING: Could not find model id for {file_id}")
+        return
         
     path = os.path.join("data", file_type, parent_folder_id)
     
     if not os.path.exists(path):
         os.makedirs(path)
-        
+    
     request = service.files().get_media(fileId=file_id)
-    with open(os.path.join(path, f"{file_name}.{file_type}"), "wb") as f:
+
+    file_path = os.path.join(path, f"{file_name}.{file_type}")
+    if os.path.exists(file_path):
+        if os.path.getsize(file_path) > 0:
+            # print(f"File {file_path} already exists")
+            return
+        else:
+            print(f"File {file_path} exists but is empty, redownloading")
+            os.remove(file_path)
+
+    # add progress bar to download using tqdm
+    with open(file_path, "wb") as f:
+        # print(f"Downloading {file_path}")
         downloader = MediaIoBaseDownload(f, request)
         done = False
         while not done:
-            _, done = downloader.next_chunk()
-
-
-
+            status, done = downloader.next_chunk(num_retries=NUM_DOWNLOAD_RETRIES)
 
 def main():
     
@@ -177,7 +241,6 @@ def main():
 
     try:
         service = build('drive', 'v3', credentials=creds)
-        # items = get_all_files_of_type(ALL_FILE_FOLDERS["PARTS_1_1_2500"], service, BINVOX_MIMETYPE)
         
         for folder in ALL_FILE_FOLDERS.keys():
             print(f"Starting {folder}")

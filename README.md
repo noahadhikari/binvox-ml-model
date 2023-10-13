@@ -43,16 +43,18 @@ NOTE: For these acquisition steps, you may need to move the `data` folder inside
 
 ### Acquiring ID data
 
-Firstly, make a folder called `data/` in the `binvox-ml-model/` folder. Run `scripts/db_id_querier` to get the ID data from the database for STL and binvox models.
+Firstly, make a folder called `data/` in the `binvox-ml-model/` folder. Run `scripts/db_id_querier.py` to get the ID data from the database for STL and binvox models.
 
 ### Acquiring ratings
 
-Then, run `scripts/db_rating_querier` to get ratings for models.
+Then, run `scripts/db_rating_querier.py` to get ratings for models.
 
 
 ### Acquiring Google credentials
 
 Follow the steps in the quickstart here and see if you can get `quickstart.py` working: https://developers.google.com/drive/api/quickstart/python
+
+If this file runs without any errors, you can move on to the next step.
 
 This will set up the environment expected for `scripts/download_all_models.py`.
 

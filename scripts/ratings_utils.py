@@ -166,6 +166,32 @@ async def add_tweaker_scores_to_db(filepath):
     await prisma.disconnect()
 
 
+
+async def get_all_models():
+    prisma = Prisma()
+    await prisma.connect()
+
+    all_models = []
+    # Get all models in batches
+    skip = 0
+    while True:
+        print(f"Getting models {skip} to {skip + PRISMA_MAX_QUERY_SIZE}")
+        models = await prisma.model.find_many(skip=skip, take=PRISMA_MAX_QUERY_SIZE)
+        if len(models) == 0:
+            break
+        all_models.extend(models)
+        skip += PRISMA_MAX_QUERY_SIZE
+
+    await prisma.disconnect()
+    return all_models
+
+def dump_models_to_csv(models):
+    # each row in the table should be a model
+    # Rating: id, modelId, score, reasoning, userId, tweakerScore, model, creator
+    # Model: id, name, stlId, binvoxId, folderId, Rating[]
+    pass
+
+
 async def main():
     # filepaths = [
     #     "tweaker_scores/parts8_1-3500.csv",
@@ -176,8 +202,11 @@ async def main():
     # for filepath in filepaths:
     #     await add_tweaker_scores_to_db(filepath)
     # await remove_duplicate_tweaker_ratings()
-    all_ratings = await get_all_ratings()
-    print(len(all_ratings))
+    # all_ratings = await get_all_ratings()
+    all_models = await get_all_models()
+    # dump_models_to_csv(all_models)
+    print(all_models[500:501])
+
 
 if __name__ == '__main__':
     asyncio.run(main())

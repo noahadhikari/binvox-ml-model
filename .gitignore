@@ -369,3 +369,6 @@ venv/
 
 # Log files
 *.log
+
+#quickstart
+**/*/quickstart.py
