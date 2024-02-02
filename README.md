@@ -93,11 +93,8 @@ A few things of note:
 
 ## Testing
 
-If everything is set up correctly, you should be able to run `dataset.py` without any errors.
+If everything is set up correctly, once you have a few models downloaded, you should be able to run `dataset.py` without any errors. You may need to move the `scripts/data/` folder to `data` (in the root directory).
 
 ## Machine Learning Model
 
-Once you have some binvox files downloaded, you can try running the ML model. For this example, try `model_for_tweaker_labels.py`.
-
-If that looks to be training, you're good to go!
-
+Once you have some binvox files downloaded, you can try running the ML model. For this example, try `model_for_tweaker_labels.py`. This is an example machine learning model in PyTorch with our dataset - feel free to tweak it as you like. `self.seq` is where the network is handled; modify it to your liking! 
