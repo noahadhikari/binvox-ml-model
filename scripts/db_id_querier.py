@@ -19,7 +19,7 @@ async def main() -> None:
     
     async def get_map_from_modelId(offset: int = 0, limit: int = 100000):
         # return await db.model.find_many(select={'id': True, 'stlId': True, 'binvoxId': True}, take=100)
-        return await db.query_raw(f'SELECT id, stlId, binvoxId, folderId \
+        return await db.query_raw(f'SELECT id, name, stlId, binvoxId, folderId \
                                     FROM Model \
                                     ORDER BY id ASC \
                                     LIMIT {limit} \
