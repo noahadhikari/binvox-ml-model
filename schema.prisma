@@ -60,15 +60,17 @@ model VerificationToken {
 }
 
 model Model {
-  id       Int      @id @default(autoincrement())
-  name     String
-  stlId    String   @unique
-  binvoxId String?
-  folderId String
-  Rating   Rating[]
+  id            Int      @id @default(autoincrement())
+  name          String
+  stlId         String   @unique
+  binvoxId      String?
+  folderId      String
+  sixty_four_id String?
+  Rating        Rating[]
 
   @@index([binvoxId])
   @@index([stlId])
+  @@index([sixty_four_id])
   @@index([name])
 }
 
