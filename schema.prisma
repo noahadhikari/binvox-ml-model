@@ -1,8 +1,8 @@
 generator client {
   provider             = "prisma-client-py"
+  output               = "./scripts/prisma"
   previewFeatures      = ["fullTextSearch", "fullTextIndex"]
   recursive_type_depth = "-1"
-  output               = "./scripts/prisma"
 }
 
 datasource db {
@@ -66,6 +66,8 @@ model Model {
   binvoxId      String?
   folderId      String
   sixty_four_id String?
+  hasInch       Boolean? @default(true)
+  folderName    String?
   Rating        Rating[]
 
   @@index([binvoxId])
@@ -86,4 +88,20 @@ model Rating {
 
   @@index([modelId])
   @@index([userId])
+}
+
+model fed7776_7fb3_51a1_bd79_6762398a381a_20241113211359_vrepl {
+  id            Int      @id @default(autoincrement())
+  name          String
+  stlId         String   @unique(map: "Model_stlId_key")
+  binvoxId      String?
+  folderId      String
+  sixty_four_id String?
+  hasInch       Boolean? @default(true)
+
+  @@index([binvoxId], map: "Model_binvoxId_idx")
+  @@index([name], map: "Model_name_idx")
+  @@index([sixty_four_id], map: "Model_sixty_four_id_idx")
+  @@index([stlId], map: "Model_stlId_idx")
+  @@map("_8fed7776_7fb3_51a1_bd79_6762398a381a_20241113211359_vrepl")
 }

@@ -1,3 +1,5 @@
+import os
+from pathlib import Path
 import asyncio
 from prisma import Prisma
 from typing import List
@@ -17,6 +19,10 @@ class Rating:
     creator: object
     
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct absolute paths
+data_dir = os.path.join(script_dir, "../data")
 
 async def main() -> None:
     db = Prisma()
@@ -59,7 +65,7 @@ async def main() -> None:
         id_data = await get_ratings(offset)
     
     # write the resulting dataframe to a csv file
-    with open('data/rating_data.csv', 'w', newline='') as f:
+    with open(os.path.join(data_dir, "rating_data.csv"), 'w', newline='') as f:
         df.to_csv(f, index=False, header=True)
 
     await db.disconnect()

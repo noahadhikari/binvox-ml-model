@@ -14,7 +14,7 @@ class BinvoxDataset(Dataset):
     BINVOX_DATA_DIR = "data/binvox"
 
     def __init__(self, ratings_json, id_data_csv):
-        raw_ratings = pd.read_json(ratings_json)
+        raw_ratings = pd.read_csv(ratings_json)
         id_data = pd.read_csv(id_data_csv, sep=",", header=0)
         
         #rename the id column of id_data to modelId
@@ -24,7 +24,7 @@ class BinvoxDataset(Dataset):
         self.binvox_labels = pd.merge(raw_ratings, id_data, on="modelId")
 
         # if binvox id is None then drop that row
-        self.binvox_labels = self.binvox_labels.dropna(subset=['binvoxId'])
+        self.binvox_labels = self.binvox_labels.dropna(subset=['folderName'])
         
         # NOTE: using tweaker scores for now. if tweaker score is None then drop that row.
         # If you want to use manual scores, change the column name to "score"
@@ -33,7 +33,7 @@ class BinvoxDataset(Dataset):
         # conjoin the id to the folderId to get the full path
         self.binvox_labels["full_binvox_path"] = \
             self.BINVOX_DATA_DIR + "/" + \
-            self.binvox_labels['folderId'] + "/" + \
+            self.binvox_labels['folderName'] + "/" + \
             self.binvox_labels['modelId'].astype(str) + ".binvox"
 
         self.binvox_labels = self.binvox_labels[self.binvox_labels["full_binvox_path"].apply(lambda x : os.path.exists(x))]
@@ -53,5 +53,5 @@ class BinvoxDataset(Dataset):
 
 
 if __name__ == "__main__":
-    b = BinvoxDataset('data/ratings.json', 'data/id_data.csv')
+    b = BinvoxDataset('data/rating_data.csv', 'data/id_data.csv')
     print(b[0])

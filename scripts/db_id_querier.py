@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import asyncio
 from prisma import Prisma
 
@@ -5,6 +8,10 @@ import json
 
 import pandas as pd
 
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Construct absolute paths
+data_dir = os.path.join(script_dir, "../data")
 
 async def main() -> None:
     db = Prisma()
@@ -19,7 +26,7 @@ async def main() -> None:
     
     async def get_map_from_modelId(offset: int = 0, limit: int = 100000):
         # return await db.model.find_many(select={'id': True, 'stlId': True, 'binvoxId': True}, take=100)
-        return await db.query_raw(f'SELECT id, name, stlId, binvoxId, folderId \
+        return await db.query_raw(f'SELECT id, name, folderName \
                                     FROM Model \
                                     ORDER BY id ASC \
                                     LIMIT {limit} \
@@ -36,7 +43,7 @@ async def main() -> None:
         id_data = await get_map_from_modelId(offset)
     
     # write the resulting dataframe to a csv file
-    with open('data/id_data.csv', 'w', newline='') as f:
+    with open(os.path.join(data_dir, "id_data.csv"), 'w', newline='') as f:
         df.to_csv(f, index=False, header=True)
 
     await db.disconnect()
