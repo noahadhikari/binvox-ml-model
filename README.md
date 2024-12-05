@@ -12,7 +12,10 @@ Run `git clone https://github.com/noahadhikari/binvox-ml-model.git` in a Bash-li
 
 If you know how to use Anaconda, you can use that instead.
 
-Using a virtual environment before package installation is recommended. To do so, run `python -m venv ./venv` from the `binvox-ml-model` directory, which should create a folder called `venv`. Then, run `source venv/Scripts/activate` to activate the virtual environment. If you're using an editor like VSCode or PyCharm, you'll also need to switch the Python interpreter to use the virtual environment you just created.
+Using a virtual environment before package installation is recommended. Python 3.11.3 must be used for the virtual environment to properly run any code. To set up the environment
+1. Make sure you have Python 3.11 installed. Check this by running `python3.11 --version`. If you do not have it installed already, make sure to [install Python 3.11.3](https://www.python.org/downloads/release/python-3113). 
+2. Run `python3.11 -m venv ./venv` from the `binvox-ml-model` directory, which should create a folder called `venv`. This will create a virtual environment running Python 3.11.3. 
+3. Then, run `source venv/Scripts/activate` if you're using Windows or `source venv/bin/activate` if you're using Mac/Linux. This will activate the virtual environment you just created. If you're using an editor like VSCode or PyCharm, you'll also need to switch the Python interpreter to use the virtual environment you just created.
 
 To get out of the virtual environment, simply run `deactivate`.
 
@@ -22,16 +25,17 @@ Python 3.11.3 was used. Once you're inside the virtual environment, you can inst
 
 ### Environment variables
 
-You will need to create a `.env` file in the folder with the following lines (omitting the curly braces):
-
+In order to get the database url to connect to the database: 
+1. Go to the PlanetScale database (labeled-voxels).
+2. Go to Connect > Create password > Prisma > Add credentials > Add credentials to .env. Copy the provided code, which should look something like the following
 ```
-GOOGLE_API_KEY = {Your Google Drive API key here. You can omit this for now and fill it in later}
-DATABASE_URL = {database url here}
+DATABASE_URL = 'mysql://example'
 ```
-
+3. Create a `.env` in the project directory and copy the line from the previous step into the file. This will be the only line in the file.
+   
 ### Activating Prisma
 
-Run `prisma generate` from the `binvox-ml-model` directory. You should see a `prisma/` folder show up. You may need to copy it into the `scripts/` folder if the following steps aren't working.
+Run `prisma generate` from the `binvox-ml-model` directory. You should see a `prisma/` folder show up. 
 
 ### Viewing the database
 
@@ -39,22 +43,28 @@ To view the database in Prisma's GUI, you can run `prisma studio` from the `binv
 
 ## Data Acquisition
 
-NOTE: For these acquisition steps, you may need to move the `data` folder inside the `scripts` folder. I'm not sure why because the directory is set to be the root directory.
-
 ### Acquiring ID data
 
-Firstly, make a folder called `data/` in the `binvox-ml-model/` folder. Run `scripts/db_id_querier.py` to get the ID data from the database for STL and binvox models.
+1. Make a folder called `data/` in the `binvox-ml-model/` folder.
+2. Run `python scripts/db_id_querier.py`. This will retrieve ID data from the database for STL and binvox models. There should be a file called `id_data.csv` within the `data/` folder now. 
 
 ### Acquiring ratings
 
-Then, run `scripts/db_rating_querier.py` to get ratings for models.
+1. Run `python scripts/db_rating_querier.py`. This will retrieve ratings data from the database for each model. There should be a file called `rating_data.csv` within the `data/` folder now. 
 
+### Acquiring Drive Links
 
+1. Download [this zip file](https://drive.google.com/file/d/1uQdS6GIRAOIrUiY4x7oS68rR7saXCtXU/view?usp=sharing) containing drive links for each part folder.
+2. Move it into the `data/` folder and unzip it. You should now have a new folder called `model_links/` within `data/` with the following files:
+   - `stl_files.csv`
+   - `parents.csv`
+   -  `64_res.csv`
+   -  `default_res.csv`
+TODO here
 ### Acquiring Google credentials
 
 Follow the steps in the quickstart here and see if you can get `quickstart.py` working: https://developers.google.com/drive/api/quickstart/python
 
-At this point, you can go back to `.env` and fill in the remaining line for `GOOGLE_API_KEY`.
 
 This will set up the environment expected for `scripts/download_all_models.py`.
 
