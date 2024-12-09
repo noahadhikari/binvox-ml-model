@@ -39,10 +39,10 @@ script_dir = os.path.dirname(os.path.abspath(__file__))
 
 # Construct absolute paths
 data_dir = os.path.join(script_dir, "../data")
-PARENTS = pd.read_csv(os.path.join(data_dir, "parents.csv"))
-STL_FOLDER_ID = pd.read_csv(os.path.join(data_dir, "stl_files.csv"), index_col=0)
-BINVOX_DEFAULT_FOLDER_ID = pd.read_csv(os.path.join(data_dir, "default_res.csv"), index_col=0)
-BINVOX_64_FOLDER_ID = pd.read_csv(os.path.join(data_dir, "64_res.csv"), index_col=0)
+PARENTS = pd.read_csv(os.path.join(data_dir, "model_links/parents.csv"))
+STL_FOLDER_ID = pd.read_csv(os.path.join(data_dir, "model_links/stl_files.csv"), index_col=0)
+BINVOX_DEFAULT_FOLDER_ID = pd.read_csv(os.path.join(data_dir, "model_links/default_res.csv"), index_col=0)
+BINVOX_64_FOLDER_ID = pd.read_csv(os.path.join(data_dir, "model_links/64_res.csv"), index_col=0)
 NAME_TO_MODEL_ID = pd.read_csv(os.path.join(data_dir, "id_data.csv"), index_col=1)
 
 NUM_DOWNLOAD_RETRIES = 10
